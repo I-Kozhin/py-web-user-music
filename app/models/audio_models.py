@@ -2,26 +2,26 @@ from pydantic import BaseModel
 from typing import Optional
 from sqlalchemy import Column, Integer, String, LargeBinary
 from app.database.database import Base
+import base64
 
-
-class AudioDto(BaseModel):
-    audio_id: Optional[str]
-    user_id: Optional[int]
-    user_token: Optional[str]
-    audio_url: Optional[str]
-
-    # @property
-    # def audio_url(self):
-    #     return self.audio_url
-
-    @classmethod
-    def from_bd(cls, db_row: 'Audio') -> 'AudioDto':
-        return cls(
-            audio_id=db_row.audio_id,
-            user_id=db_row.user_id,
-            user_token=db_row.user_token,
-            audio_url="http://host:port/record?id=id_записи&user=id_пользователя"
-        )
+# class AudioDto(BaseModel):
+#     audio_id: Optional[str]
+#     user_id: Optional[int]
+#     user_token: Optional[str]
+#     audio_rec: Optional[bytes]
+#
+#     # @property
+#     # def audio_url(self):
+#     #     return self.audio_url
+#
+#     @classmethod
+#     def from_bd(cls, db_row: 'Audio') -> 'AudioDto':
+#         return cls(
+#             audio_id=db_row.audio_id,
+#             user_id=db_row.user_id,
+#             user_token=db_row.user_token,
+#             audio_rec=db_row.audio_data
+#         )
 
 
 class Audio(Base):

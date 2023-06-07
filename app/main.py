@@ -21,8 +21,12 @@ async def startup_event():
     await init_models()
 
 
-if __name__ == "__main__":
+@app.get("/")
+def root():
+    return {"If you can see this message": "Then it is OK"}
 
+
+if __name__ == "__main__":
     import uvicorn
 
     uvicorn.run(app, host=HOST, port=PORT)

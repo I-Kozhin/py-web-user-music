@@ -32,6 +32,6 @@ async def get_table_names_async():
 
 async def init_models():
     table_names = await get_table_names_async()
-    if db not in table_names:
+    if 'users' or 'audios' not in table_names:
         async with engine.begin() as conn:
             await conn.run_sync(Base.metadata.create_all)

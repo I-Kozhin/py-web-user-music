@@ -30,8 +30,8 @@ class UserRepository:
 
     @staticmethod
     async def is_user_exists_by_name(user_name: str, session: AsyncSession) -> bool:
-        query = select(User).filter(User.user_name == user_name).first()
-        result = await session.execute(query)
+        query = select(User).filter(User.user_name == user_name)
+        result = await session.execute(query).first()
         return result is not None
 
     @staticmethod
@@ -43,7 +43,6 @@ class UserRepository:
             logger.error(f"An error occurred: {error}")
             raise CommitError("Commit failed. Program terminated.")
         return new_user
-
 
     @staticmethod
     async def get_user_by_id(user_id: int, session: AsyncSession) -> UserDto:

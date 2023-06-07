@@ -3,7 +3,7 @@ import uuid
 from pydantic import BaseModel
 from typing import Optional
 from sqlalchemy import Column, Integer, String
-from app.database.user_database import Base
+from app.database.database import Base
 
 
 class UserDto(BaseModel):
@@ -15,7 +15,7 @@ class UserDto(BaseModel):
     def from_bd(cls, db_row: 'User') -> 'UserDto':
         return cls(
             user_id=db_row.user_id,
-            user_name=db_row.user_id,
+            user_name=db_row.user_name,
             user_token=db_row.user_token
 
         )
@@ -36,6 +36,11 @@ class User(Base):
     user_id = Column(Integer, primary_key=True, index=True, unique=True, autoincrement=True)
     user_name = Column(String, index=True)
     user_token = Column(String, unique=True)
+
+    # @property
+    # def user_token(self):
+    #     return self.user_token
+
 
     @classmethod
     def from_dto(cls, dto: UserDto) -> 'User':

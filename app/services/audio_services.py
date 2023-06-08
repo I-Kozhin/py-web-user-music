@@ -1,4 +1,6 @@
 import uuid
+from io import BytesIO
+
 from pydub import AudioSegment
 
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -34,10 +36,11 @@ class AudioService:
         new_mp3_file = await AudioSegment.from_wav('audio_wav.wav')
         return await new_mp3_file.export('test.mp3', format='mp3')
 
-    async def add_audio_wav(self, user_id: int, user_token: str, audio_wav: bytes, session: AsyncSession) -> Audio:
+    async def add_audio_wav(self, user_id: int, user_token: str, audio_wav: BytesIO, session: AsyncSession) -> Audio:
         if await self.is_valid_token_to_id(user_id, user_token, session):
             result = await self.audio_repository.add_audio_to_database(
-                Audio(audio_id=create_token(), user_id=user_id, user_token=user_token, audio_data=audio_wav), session)
+                Audio(audio_id=create_token(), user_id=user_id, user_token=user_token, audio_data=audio_wav.read()),
+                session)
         else:
             pass
 

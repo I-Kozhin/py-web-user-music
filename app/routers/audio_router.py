@@ -17,11 +17,11 @@ PORT = 8000
 async def add_audio(user_id: int, user_token: str, audio_wav: UploadFile = File(...),
                     audio_service: AudioService = Depends(AudioService),
                     session: AsyncSession = Depends(get_session)) -> str:
-    new_mp3_file = AudioSegment.from_wav(audio_wav.file)
-    converted_audio = BytesIO()
-    new_mp3_file.export(converted_audio, format='mp3')
-    converted_audio.seek(0)  # Reset the file pointer to the beginning
-
+    # new_mp3_file = AudioSegment.from_wav(audio_wav.file)
+    # converted_audio = BytesIO()
+    # new_mp3_file.export(converted_audio, format='mp3')
+    # converted_audio.seek(0)
+    converted_audio = await audio_service.convert_from_wav_to_mp3(audio_wav)
     # return StreamingResponse(converted_audio, media_type='audio/mpeg')
     try:
         audio = await audio_service.add_audio_wav(user_id, user_token, converted_audio, session)

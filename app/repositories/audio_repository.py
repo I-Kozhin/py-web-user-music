@@ -1,15 +1,13 @@
 import logging
 import sys
-from typing import List, Type
 
-from sqlalchemy import desc
 from sqlalchemy import select
 from sqlalchemy.exc import SQLAlchemyError
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import Session  # type: ignore
 
-from app.models.user_models import User
 from app.models.audio_models import Audio
+from app.models.user_models import User
 
 # Create a logger
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(name)s - %(levelname)s - %(message)s')

@@ -1,9 +1,8 @@
 import uuid
-from typing import List, Optional
 
-import aiohttp
-from sqlalchemy.orm import Session  # type: ignore
 from sqlalchemy.ext.asyncio import AsyncSession
+from sqlalchemy.orm import Session  # type: ignore
+
 from app.models.user_models import UserDto, User
 from app.repositories.user_repository import UserRepository
 

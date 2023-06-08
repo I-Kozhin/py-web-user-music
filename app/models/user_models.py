@@ -37,10 +37,6 @@ class User(Base):
     user_name = Column(String, index=True)
     user_token = Column(String, unique=True)
 
-    # @property
-    # def user_token(self):
-    #     return self.user_token
-
 
     @classmethod
     def from_dto(cls, dto: UserDto) -> 'User':

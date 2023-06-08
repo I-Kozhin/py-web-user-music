@@ -1,15 +1,11 @@
 import logging
 import sys
-from typing import List, Type
 
-from sqlalchemy import desc
 from sqlalchemy import select
 from sqlalchemy.exc import SQLAlchemyError
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import Session  # type: ignore
 
-# from database.question import Question
-# from dto.question_dto import QuestionDto
 from app.models.user_models import User, UserDto
 
 # Create a logger

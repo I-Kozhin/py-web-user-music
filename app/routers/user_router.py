@@ -11,9 +11,9 @@ user_service = UserService()
 # сделать user_service глобальным, чтобы я один раз объявил его
 
 @user_router.post("/create-user/", response_model=dict)
-async def create_user(user_name: str) -> dict:
+async def create_user(user_name: str, session: AsyncSession = Depends(get_session)) -> dict:
     try:
-        user = await user_service.create_user(user_name)
+        user = await user_service.create_user(user_name, session)
     except:
         raise
 

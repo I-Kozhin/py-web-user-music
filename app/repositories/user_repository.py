@@ -17,7 +17,10 @@ logger = logging.getLogger(__name__)
 
 
 class UserRepository:
-    session: AsyncSession = Depends(get_session)
+    session: AsyncSession
+
+    def __init__(self):
+        self.session = get_session()
 
     @staticmethod
     def creating_user_object(user_name: str) -> User:

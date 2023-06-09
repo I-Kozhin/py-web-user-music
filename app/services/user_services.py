@@ -1,19 +1,10 @@
-import uuid
-
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import Session  # type: ignore
 
 from app.models.user_models import UserDto, User
 from app.repositories.user_repository import UserRepository
-
-
-class UserNameError(Exception):
-    def __init__(self, message):
-        super().__init__(message)
-
-
-def create_token() -> str:
-    return str(uuid.uuid4())
+from app.services.token_generator import create_token
+from app.errors import UserNameError
 
 
 class UserService:

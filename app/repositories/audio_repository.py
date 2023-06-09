@@ -8,18 +8,12 @@ from sqlalchemy.orm import Session  # type: ignore
 
 from app.models.audio_models import Audio
 from app.models.user_models import User
+from app.errors import CommitError
 
 # Create a logger
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(name)s - %(levelname)s - %(message)s')
 
 logger = logging.getLogger(__name__)
-
-
-class CommitError(Exception):
-    def __init__(self, message):
-        super().__init__(message)
-        # Terminate the program
-        sys.exit(1)
 
 
 class AudioRepository:

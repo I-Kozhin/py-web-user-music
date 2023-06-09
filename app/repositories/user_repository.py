@@ -1,12 +1,11 @@
 import logging
-import sys
 
-from sqlalchemy import select
 from sqlalchemy.exc import SQLAlchemyError
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import Session  # type: ignore
 
-from app.models.user_models import User, UserDto
+from app.models.user_models import User
+from app.errors import CommitError
 
 # Create a logger
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(name)s - %(levelname)s - %(message)s')
@@ -14,21 +13,7 @@ logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(name)s - %(level
 logger = logging.getLogger(__name__)
 
 
-class CommitError(Exception):
-    def __init__(self, message):
-        super().__init__(message)
-        # Terminate the program
-        sys.exit(1)
-
-
 class UserRepository:
-    pass
-
-    @staticmethod
-    async def is_user_exists_by_name(user_name: str, session: AsyncSession) -> bool:
-        query = select(User).filter(User.user_name == user_name)
-        result = await session.execute(query).first()
-        return result is not None
 
     @staticmethod
     async def add_user_to_database(new_user: User, session: AsyncSession) -> User:
@@ -39,10 +24,3 @@ class UserRepository:
             logger.error(f"An error occurred: {error}")
             raise CommitError("Commit failed. Program terminated.")
         return new_user
-
-    @staticmethod
-    async def get_user_by_id(user_id: int, session: AsyncSession) -> UserDto:
-        query = select(User).filter(User.user_id == user_id)
-        result = await session.execute(query).first()
-        result = UserDto.from_bd(result)
-        return result

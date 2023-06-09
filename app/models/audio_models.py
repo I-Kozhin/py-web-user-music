@@ -11,5 +11,5 @@ class Audio(Base):
     __tablename__ = "audios"
     audio_id = Column(String, primary_key=True, unique=True, index=True, )
     user_id = Column(Integer, primary_key=True, index=True)
-    user_token = Column(String)
+    user_token = Column(String, index=True)
     audio_data = Column(LargeBinary)

@@ -1,28 +1,18 @@
 from fastapi import APIRouter, Depends, Response, File, UploadFile
 from sqlalchemy.ext.asyncio import AsyncSession
-from pydub import AudioSegment
-from io import BytesIO
 
-from fastapi.responses import StreamingResponse
 from app.database.database_session_manager import get_session
 from app.services.audio_services import AudioService
+from app.settings import HOST, PORT
 
 audio_router = APIRouter()
-
-HOST = 'localhost'
-PORT = 8000
 
 
 @audio_router.post("/add-audio/")
 async def add_audio(user_id: int, user_token: str, audio_wav: UploadFile = File(...),
                     audio_service: AudioService = Depends(AudioService),
                     session: AsyncSession = Depends(get_session)) -> str:
-    # new_mp3_file = AudioSegment.from_wav(audio_wav.file)
-    # converted_audio = BytesIO()
-    # new_mp3_file.export(converted_audio, format='mp3')
-    # converted_audio.seek(0)
     converted_audio = await audio_service.convert_from_wav_to_mp3(audio_wav)
-    # return StreamingResponse(converted_audio, media_type='audio/mpeg')
     try:
         audio = await audio_service.add_audio_wav(user_id, user_token, converted_audio, session)
     except:

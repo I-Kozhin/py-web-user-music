@@ -1,23 +1,13 @@
-import uuid
 from io import BytesIO
 
 from fastapi import UploadFile
 from pydub import AudioSegment
-
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import Session  # type: ignore
 
 from app.models.audio_models import Audio
 from app.repositories.audio_repository import AudioRepository
-
-
-class UserNameError(Exception):
-    def __init__(self, message):
-        super().__init__(message)
-
-
-def create_token() -> str:
-    return str(uuid.uuid4())
+from app.services.token_generator import create_token
 
 
 class AudioService:

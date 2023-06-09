@@ -20,8 +20,6 @@ RUN apt-get update && apt-get install -y \
 
 RUN python -m pip install --upgrade pip
 
-## Set the working directory in the container
-#WORKDIR /app
 
 # Copy the requirements file to the container
 COPY requirements.txt ./

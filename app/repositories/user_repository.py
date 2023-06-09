@@ -19,8 +19,10 @@ logger = logging.getLogger(__name__)
 class UserRepository:
     session: AsyncSession
 
-    def __init__(self):
-        self.session = get_session()
+    async def get_async_session(self) -> AsyncSession:
+        if self.session is None:
+            self.session = await get_session()
+        return self.session
 
     @staticmethod
     def creating_user_object(user_name: str) -> User:
@@ -28,9 +30,10 @@ class UserRepository:
 
     async def add_user_to_database(self, user_name: str) -> User:
         new_user = self.creating_user_object(user_name)
-        self.session.add(new_user)
+        session = await self.get_async_session()
+        session.add(new_user)
         try:
-            await self.session.commit()
+            await session.commit()
         except SQLAlchemyError as error:
             logger.error(f"An error occurred: {error}")  # расписать в каком месте ошибка создаётся
             raise CommitError("Commit failed.")

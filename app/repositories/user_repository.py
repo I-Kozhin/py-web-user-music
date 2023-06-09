@@ -22,9 +22,9 @@ class UserRepository:
     def __init__(self):
         self.session = None
 
-    def get_async_session(self) -> AsyncSession:
+    async def get_async_session(self) -> AsyncSession:
         if self.session is None:
-            self.session = get_session()
+            self.session = await get_session()
         return self.session
 
     @staticmethod
@@ -33,11 +33,12 @@ class UserRepository:
 
     async def add_user_to_database(self, user_name: str) -> User:
         new_user = self.creating_user_object(user_name)
-        session = self.get_async_session()
-        session.add(new_user)
-        try:
-            await session.commit()
-        except SQLAlchemyError as error:
-            logger.error(f"An error occurred: {error}")  # расписать в каком месте ошибка создаётся
-            raise CommitError("Commit failed.")
+        async_session = await self.get_async_session()
+        async with async_session.begin():
+            async_session.add(new_user)
+            try:
+                await async_session.commit()
+            except SQLAlchemyError as error:
+                logger.error(f"An error occurred: {error}")  # расписать в каком месте ошибка создаётся
+                raise CommitError("Commit failed.")
         return new_user

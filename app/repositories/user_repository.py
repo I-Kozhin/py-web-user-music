@@ -24,7 +24,7 @@ class UserRepository:
 
     async def get_async_session(self) -> AsyncSession:
         if self.session is None:
-            self.session = await get_session()
+            self.session = await get_session().start_async()
         return self.session
 
     @staticmethod

@@ -25,7 +25,7 @@ services:
             - "8000:8000"
         command: [ "uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8000", "--reload" ]
         environment:
-            DB_HOST: "db-postgres"
+            DB_HOST: "db-postgres-for-2-task"
             DB_PORT: "5432"
             DB_USER: "user"
             DB_PASSWORD: "123456789"

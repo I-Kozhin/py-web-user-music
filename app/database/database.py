@@ -5,13 +5,14 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.ext.asyncio import create_async_engine  # type: ignore
 from sqlalchemy.ext.declarative import declarative_base  # type: ignore
 from sqlalchemy.orm import sessionmaker  # type: ignore
+from app.settings import DB_HOST, DB_PORT, DB_USER, DB_PASSWORD, DB_NAME, DB_TYPE
 
-host = os.getenv('DB_HOST', 'localhost')
-port = os.getenv('DB_PORT', '5432')
-user = os.getenv('DB_USER', 'user')
-password = os.getenv('DB_PASSWORD', '123456789')
-db = os.getenv('DB_NAME', 'postgresdb')
-dbtype = os.getenv('DB_TYPE', 'postgresql')
+host = os.getenv('DB_HOST', DB_HOST)
+port = os.getenv('DB_PORT', DB_PORT)
+user = os.getenv('DB_USER', DB_USER)
+password = os.getenv('DB_PASSWORD', DB_PASSWORD)
+db = os.getenv('DB_NAME', DB_NAME)
+dbtype = os.getenv('DB_TYPE', DB_TYPE)
 
 SQLALCHEMY_DATABASE_URL = f"{dbtype}+asyncpg://{user}:{password}@{host}:{port}/{db}"
 
@@ -32,6 +33,6 @@ async def get_table_names_async():
 
 async def init_models():
     table_names = await get_table_names_async()
-    if 'users' or 'audios' not in table_names:
+    if 'users' or 'audios' not in table_names:  # проверить создана ли база данных, мб ест функция из коробки
         async with engine.begin() as conn:
             await conn.run_sync(Base.metadata.create_all)

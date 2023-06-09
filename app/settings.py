@@ -1,4 +1,4 @@
-import os
+import socket
 
 HOST = '0.0.0.0'
 PORT = 8000
@@ -8,4 +8,4 @@ DB_USER = 'user'
 DB_PASSWORD = '123456789'
 DB_NAME = 'postgresdb'
 DB_TYPE = 'postgresql'
-HOST_OUT = os.environ.get("LOCAL_IP")
+HOST_OUT = socket.gethostbyname(socket.gethostname())

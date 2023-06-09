@@ -15,17 +15,13 @@ logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(name)s - %(level
 
 logger = logging.getLogger(__name__)
 
-session = await anext(get_session())
-
-
 class UserRepository:
 
     @staticmethod
     def creating_user_object(user_name: str) -> User:
         return User(user_name=user_name, user_token=create_token())
 
-    async def add_user_to_database(self, user_name: str) -> User:
-
+    async def add_user_to_database(self, user_name: str, session: AsyncSession) -> User:
         new_user = self.creating_user_object(user_name)
         session.add(new_user)
         try:

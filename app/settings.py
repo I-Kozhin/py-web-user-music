@@ -1,5 +1,5 @@
-# HOST = '0.0.0.0'
-HOST = 'localhost'
+HOST = '0.0.0.0'
+# HOST = 'localhost'
 PORT = 8000
 DB_HOST = 'localhost'
 DB_PORT = '5432'

@@ -7,12 +7,12 @@ from app.settings import HOST, PORT
 
 audio_router = APIRouter()
 
-
+# глобально сервис
 @audio_router.post("/add-audio/")
 async def add_audio(user_id: int, user_token: str, audio_wav: UploadFile = File(...),
                     audio_service: AudioService = Depends(AudioService),
                     session: AsyncSession = Depends(get_session)) -> str:
-    converted_audio = await audio_service.convert_from_wav_to_mp3(audio_wav)
+    converted_audio = await audio_service.convert_from_wav_to_mp3(audio_wav)  # нужно вызвать сервис один раз
     try:
         audio = await audio_service.add_audio_wav(user_id, user_token, converted_audio, session)
     except:
@@ -24,9 +24,11 @@ async def add_audio(user_id: int, user_token: str, audio_wav: UploadFile = File(
 async def get_audio(audio_id: str, user_id: int, audio_service: AudioService = Depends(AudioService),
                     session: AsyncSession = Depends(get_session)) -> bytes:
     try:
-        audio = await audio_service.get_audio_mp3(audio_id, user_id, session)
+        audio = await audio_service.get_audio(audio_id, user_id, session)
     except:
         raise
 
     return Response(content=audio.audio_data, media_type='audio/mpeg',
                     headers={'Content-Disposition': 'attachment; filename=audio_you_wanted.mp3'})
+
+#  я передаю в get id_user, token_user, id_audio

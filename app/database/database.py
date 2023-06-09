@@ -33,6 +33,6 @@ async def get_table_names_async():
 
 async def init_models():
     table_names = await get_table_names_async()
-    if 'users' or 'audios' not in table_names:
+    if 'users' or 'audios' not in table_names:  # проверить создана ли база данных, мб ест функция из коробки
         async with engine.begin() as conn:
             await conn.run_sync(Base.metadata.create_all)

@@ -19,6 +19,9 @@ logger = logging.getLogger(__name__)
 class UserRepository:
     session: AsyncSession
 
+    def __init__(self):
+        self.session = None
+
     async def get_async_session(self) -> AsyncSession:
         if self.session is None:
             self.session = await get_session()

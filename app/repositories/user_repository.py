@@ -23,6 +23,7 @@ class UserRepository:
         return User(user_name=user_name, user_token=create_token())
 
     async def add_user_to_database(self, user_name: str, session: AsyncSession = Depends(get_session)) -> User:
+        session = await anext(get_session())
         new_user = self.creating_user_object(user_name)
         session.add(new_user)
         try:

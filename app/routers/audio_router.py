@@ -3,7 +3,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.database.database_session_manager import get_session
 from app.services.audio_services import AudioService
-from app.settings import HOST, PORT
+from app.settings import HOST_OUT, PORT
 
 audio_router = APIRouter()
 
@@ -17,7 +17,7 @@ async def add_audio(user_id: int, user_token: str, audio_wav: UploadFile = File(
         audio = await audio_service.add_audio_wav(user_id, user_token, converted_audio, session)
     except:
         raise
-    return f"http://{HOST}:{PORT}/record?audio_id={audio.audio_id}&user_id={audio.user_id}"
+    return f"http://{HOST_OUT}:{PORT}/record?audio_id={audio.audio_id}&user_id={audio.user_id}"
 
 
 @audio_router.get("/record", response_model=bytes, name="get_audio")

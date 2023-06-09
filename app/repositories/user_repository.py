@@ -1,9 +1,11 @@
 import logging
 
+from fastapi import Depends
 from sqlalchemy.exc import SQLAlchemyError
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import Session  # type: ignore
 
+from app.database.database_session_manager import get_session
 from app.models.user_models import User
 from app.errors import CommitError
 from app.services.token_generator import create_token
@@ -15,16 +17,17 @@ logger = logging.getLogger(__name__)
 
 
 class UserRepository:
+    session: AsyncSession = Depends(get_session)
 
     @staticmethod
     def creating_user_object(user_name: str) -> User:
         return User(user_name=user_name, user_token=create_token())
 
-    async def add_user_to_database(self, user_name: str, session: AsyncSession) -> User:
+    async def add_user_to_database(self, user_name: str) -> User:
         new_user = self.creating_user_object(user_name)
-        session.add(new_user)
+        self.session.add(new_user)
         try:
-            await session.commit()
+            await self.session.commit()
         except SQLAlchemyError as error:
             logger.error(f"An error occurred: {error}")  # расписать в каком месте ошибка создаётся
             raise CommitError("Commit failed.")

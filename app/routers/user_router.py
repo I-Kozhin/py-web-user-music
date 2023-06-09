@@ -5,7 +5,7 @@ from app.database.database_session_manager import get_session
 from app.services.user_services import UserService
 
 user_router = APIRouter()
-user_service: UserService = Depends(UserService)
+user_service = UserService()
 
 
 # сделать user_service глобальным, чтобы я один раз объявил его

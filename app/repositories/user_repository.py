@@ -17,28 +17,17 @@ logger = logging.getLogger(__name__)
 
 
 class UserRepository:
-    session: AsyncSession
-
-    def __init__(self):
-        self.session = None
-
-    async def get_async_session(self) -> AsyncSession:
-        if self.session is None:
-            self.session = await get_session().start_async()
-        return self.session
 
     @staticmethod
     def creating_user_object(user_name: str) -> User:
         return User(user_name=user_name, user_token=create_token())
 
-    async def add_user_to_database(self, user_name: str) -> User:
+    async def add_user_to_database(self, user_name: str, session: AsyncSession = Depends(get_session)) -> User:
         new_user = self.creating_user_object(user_name)
-        async_session = await self.get_async_session()
-        async with async_session.begin():
-            async_session.add(new_user)
-            try:
-                await async_session.commit()
-            except SQLAlchemyError as error:
-                logger.error(f"An error occurred: {error}")  # расписать в каком месте ошибка создаётся
-                raise CommitError("Commit failed.")
+        session.add(new_user)
+        try:
+            await session.commit()
+        except SQLAlchemyError as error:
+            logger.error(f"An error occurred: {error}")  # расписать в каком месте ошибка создаётся
+            raise CommitError("Commit failed.")
         return new_user

@@ -3,7 +3,7 @@ version: "3.8"
 services:
     postgres-db:
         image: postgres:13.3
-        container_name: db-postgres
+        container_name: db-postgres-for-2-task
         environment:
             POSTGRES_DB: "postgresdb"
             POSTGRES_USER: "user"

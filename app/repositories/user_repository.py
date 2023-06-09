@@ -22,9 +22,9 @@ class UserRepository:
     def __init__(self):
         self.session = None
 
-    async def get_async_session(self) -> AsyncSession:
+    def get_async_session(self) -> AsyncSession:
         if self.session is None:
-            self.session = await get_session()
+            self.session = get_session()
         return self.session
 
     @staticmethod
@@ -33,7 +33,7 @@ class UserRepository:
 
     async def add_user_to_database(self, user_name: str) -> User:
         new_user = self.creating_user_object(user_name)
-        session = await self.get_async_session()
+        session = self.get_async_session()
         session.add(new_user)
         try:
             await session.commit()

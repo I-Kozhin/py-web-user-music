@@ -9,7 +9,7 @@ user_router = APIRouter()
 user_service = UserService()
 
 
-@user_router.post("/create-user/", response_model=JSONResponse)
+@user_router.post("/create-user/", response_model=dict)
 async def create_user(user_name: str, session: AsyncSession = Depends(get_session)) -> JSONResponse:
     try:
         user = await user_service.create_user(user_name, session)

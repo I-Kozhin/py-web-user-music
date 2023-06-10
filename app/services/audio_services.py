@@ -17,6 +17,7 @@ class AudioService:
 
     def __init__(self):
         self.audio_repository = AudioRepository()
+        self.user_repository = UserRepository()
 
     async def is_valid_id(self, user_id: int, session: AsyncSession) -> bool:
         return await self.audio_repository.validate_id(user_id, session)

@@ -5,9 +5,11 @@ from sqlalchemy.exc import SQLAlchemyError
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import Session  # type: ignore
 
+from io import BytesIO
 from app.errors import CommitError
 from app.models.audio_models import Audio
 from app.models.user_models import User
+from app.services.token_generator import create_token
 
 # Create a logger
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(name)s - %(levelname)s - %(message)s')
@@ -17,14 +19,14 @@ logger = logging.getLogger(__name__)
 
 class AudioRepository:
 
-    @staticmethod
-    async def add_audio_to_database(new_audio: Audio, session: AsyncSession) -> Audio:
+    async def add_audio_to_database(self, user_id: int, audio_data: BytesIO, session: AsyncSession) -> Audio:
+        new_audio = self.create_audio_object(user_id, audio_data)
         session.add(new_audio)
         try:
             await session.commit()
         except SQLAlchemyError as error:
-            logger.error(f"An error occurred: {error}")  # An error  while commit
-            raise CommitError("Commit failed.")
+            logger.error(f"An error occurred while committing in the Audio repository:: {error}")
+            raise CommitError("Commit failed. Audio repository.")
         return new_audio
 
     @staticmethod
@@ -36,6 +38,17 @@ class AudioRepository:
 
     @staticmethod
     async def validate_id(user_id: int, session: AsyncSession) -> bool:
-        query = select(Audio).filter(Audio.user_id == user_id) # здесь только audio_id
-        result = await session.execute(query)  # result.scalar()
+        query = select(Audio).filter(Audio.user_id == user_id)
+        result = await session.execute(query)
         return result is not None
+
+    @staticmethod
+    async def validate_audio_id(audio_id: str, session: AsyncSession) -> bool:
+        query = select(Audio).filter(Audio.audio_id == audio_id)
+        result = await session.execute(query)
+        result = result.scalar()
+        return result is not None
+
+    @staticmethod
+    def create_audio_object(user_id: int, audio_data: BytesIO) -> Audio:
+        return Audio(audio_id=create_token(), user_id=user_id, audio_data=audio_data.read())

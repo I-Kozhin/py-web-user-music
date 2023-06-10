@@ -18,12 +18,12 @@ logger = logging.getLogger(__name__)
 class UserRepository:
 
     async def add_user_to_database(self, user_name: str, session: AsyncSession) -> User:
-        new_user = self.creating_user_object(user_name)
+        new_user = self.create_user_object(user_name)
         session.add(new_user)
         try:
             await session.commit()
         except SQLAlchemyError as error:
-            logger.error(f"An error occurred while commit in User repository: {error}")
+            logger.error(f"An error occurred while committing in the User repository: {error}")
             raise CommitError("Commit failed. User database.")
         return new_user
 
@@ -35,5 +35,5 @@ class UserRepository:
         return user is not None
 
     @staticmethod
-    def creating_user_object(user_name: str) -> User:
+    def create_user_object(user_name: str) -> User:
         return User(user_name=user_name, user_token=create_token())

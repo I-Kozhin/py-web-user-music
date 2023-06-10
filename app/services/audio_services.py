@@ -19,11 +19,26 @@ class AudioService:
         self.audio_repository = AudioRepository()
         self.user_repository = UserRepository()
 
-    async def is_valid_id(self, user_id: int, session: AsyncSession) -> bool:
-        return await self.audio_repository.validate_id(user_id, session)
+    # create audio
+    async def create_audio(self, user_id: int, user_token: str, audio_wav: UploadFile, session: AsyncSession) -> Audio:
+        if await self.is_valid_token_to_id(user_id, user_token, session):
+            audio_mp3 = await self.convert_from_wav_to_mp3(audio_wav)
+            audio = await self.audio_repository.add_audio_to_database(user_id, audio_mp3, session)
+        else:
+            pass
 
-    async def is_valid_token_to_id(self, user_id: int, user_token: str, session: AsyncSession) -> bool:
-        return await self.user_repository.validate_id_by_token(user_id, user_token, session)
+        return audio
+
+    async def get_audio(self, audio_id: str, user_id: int, session: AsyncSession) -> Audio:
+        if await self.is_valid_user_id(user_id, session):
+            if await self.is_valid_audio_id(audio_id, session):
+                result = await self.audio_repository.get_audio_by_id(audio_id, session)
+            else:
+                print('There is no such audio_id')
+        else:
+            print('There is no such user_id')
+
+        return result
 
     @staticmethod
     async def convert_from_wav_to_mp3(audio_wav: UploadFile) -> BytesIO:
@@ -33,22 +48,11 @@ class AudioService:
         converted_audio.seek(0)
         return converted_audio
 
-    # create audio
-    async def create_audio(self, user_id: int, user_token: str, audio_wav: UploadFile, session: AsyncSession) -> Audio:
-        if await self.is_valid_token_to_id(user_id, user_token, session):
-            audio_mp3 = await self.convert_from_wav_to_mp3(audio_wav)
-            audio = await self.audio_repository.add_audio_to_database(
-                Audio(audio_id=create_token(), user_id=user_id, user_token=user_token, audio_data=audio_mp3.read()),
-                session) #  логику создания аудио отдать репозиторию, передавать туда только user_id, audio_data
-        else:
-            pass
+    async def is_valid_user_id(self, user_id: int, session: AsyncSession) -> bool:
+        return await self.audio_repository.validate_user_id(user_id, session)
 
-        return audio
+    async def is_valid_audio_id(self, audio_id: str, session: AsyncSession) -> bool:
+        return await self.audio_repository.validate_audio_id(audio_id, session)
 
-    async def get_audio(self, audio_id: str, user_id: int, session: AsyncSession) -> Audio:
-        if await self.is_valid_id(user_id, session):  # Добавить проверку id записи
-            result = await self.audio_repository.get_audio_by_id(audio_id, session)
-        else:
-            pass
-
-        return result
+    async def is_valid_token_to_id(self, user_id: int, user_token: str, session: AsyncSession) -> bool:
+        return await self.user_repository.validate_id_by_token(user_id, user_token, session)

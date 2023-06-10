@@ -20,7 +20,7 @@ async def add_audio(user_id: int, user_token: str, audio_wav: UploadFile = File(
 
 
 @audio_router.get("/record", response_model=bytes, name="get_audio")
-async def get_audio(audio_id: str, user_id: int, session: AsyncSession = Depends(get_session)) -> bytes:
+async def get_audio(audio_id: str, user_id: int, session: AsyncSession = Depends(get_session)) -> Response:
     try:
         audio = await audio_service.get_audio(audio_id, user_id, session)
     except:

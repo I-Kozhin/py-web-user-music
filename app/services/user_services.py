@@ -3,7 +3,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import Session  # type: ignore
 
 from app.database.database_session_manager import get_session
-from app.models.user_models import UserDto, User
+from app.models.user import UserDto, User
 from app.repositories.user_repository import UserRepository
 from app.services.token_generator import create_token
 from app.errors import UserNameError

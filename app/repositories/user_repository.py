@@ -5,7 +5,7 @@ from sqlalchemy.exc import SQLAlchemyError
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import Session  # type: ignore
 
-from app.models.user_models import User
+from app.models.user import User
 from app.errors import CommitError
 from app.services.token_generator import create_token
 

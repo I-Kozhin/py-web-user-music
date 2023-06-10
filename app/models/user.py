@@ -1,10 +1,8 @@
-import uuid
-
 from pydantic import BaseModel
 from typing import Optional
 from sqlalchemy import Column, Integer, String
 from app.database.database import Base
-
+from sqlalchemy.orm import relationship
 
 class UserDto(BaseModel):
     user_id: Optional[int]
@@ -24,6 +22,9 @@ class User(Base):
     """
 
     __tablename__ = "users"
+
     user_id = Column(Integer, primary_key=True, index=True, unique=True, autoincrement=True)
     user_name = Column(String, index=True)
     user_token = Column(String, unique=True)
+    
+    audios = relationship("Audio", back_populates="user")

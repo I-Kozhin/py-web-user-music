@@ -18,21 +18,6 @@ logger = logging.getLogger(__name__)
 class AudioRepository:
 
     @staticmethod
-    async def validate_id_by_token(user_id: int, user_token: str, session: AsyncSession) -> bool: # переместить в user repository
-        query = select(User).filter(User.user_id == user_id) # валидация должна быть на уровне сервиса
-        result = await session.execute(query) # можно проверить все условия сразу sql запросом, добавить в фильтр вторым условием
-        user = result.scalar()
-        if user is None:
-            return False
-        return user.user_token == user_token
-
-    @staticmethod
-    async def validate_id(user_id: int, session: AsyncSession) -> bool:
-        query = select(Audio).filter(Audio.user_id == user_id) # здесь только audio_id
-        result = await session.execute(query)  # result.scalar()
-        return result is not None
-
-    @staticmethod
     async def add_audio_to_database(new_audio: Audio, session: AsyncSession) -> Audio:
         session.add(new_audio)
         try:
@@ -48,3 +33,9 @@ class AudioRepository:
         result = await session.execute(query)
         audio = result.scalar()
         return audio
+
+    @staticmethod
+    async def validate_id(user_id: int, session: AsyncSession) -> bool:
+        query = select(Audio).filter(Audio.user_id == user_id) # здесь только audio_id
+        result = await session.execute(query)  # result.scalar()
+        return result is not None

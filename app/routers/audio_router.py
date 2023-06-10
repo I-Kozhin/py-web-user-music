@@ -13,7 +13,7 @@ audio_service = AudioService()
 async def add_audio(user_id: int, user_token: str, audio_wav: UploadFile = File(...),
                     session: AsyncSession = Depends(get_session)) -> str:
     try:
-        audio = await audio_service.add_audio_wav(user_id, user_token, audio_wav, session)
+        audio = await audio_service.create_audio(user_id, user_token, audio_wav, session)
     except:
         raise
     return f"http://{HOST_OUT}:{PORT}/record?audio_id={audio.audio_id}&user_id={audio.user_id}"

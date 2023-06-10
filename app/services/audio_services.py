@@ -7,11 +7,13 @@ from sqlalchemy.orm import Session  # type: ignore
 
 from app.models.audio_models import Audio
 from app.repositories.audio_repository import AudioRepository
+from app.repositories.user_repository import UserRepository
 from app.services.token_generator import create_token
 
 
 class AudioService:
     audio_repository: AudioRepository
+    user_repository: UserRepository
 
     def __init__(self):
         self.audio_repository = AudioRepository()
@@ -20,7 +22,7 @@ class AudioService:
         return await self.audio_repository.validate_id(user_id, session)
 
     async def is_valid_token_to_id(self, user_id: int, user_token: str, session: AsyncSession) -> bool:
-        return await self.audio_repository.validate_id_by_token(user_id, user_token, session)
+        return await self.user_repository.validate_id_by_token(user_id, user_token, session)
 
     @staticmethod
     async def convert_from_wav_to_mp3(audio_wav: UploadFile) -> BytesIO:
@@ -31,7 +33,7 @@ class AudioService:
         return converted_audio
 
     # create audio
-    async def add_audio_wav(self, user_id: int, user_token: str, audio_wav: UploadFile, session: AsyncSession) -> Audio:
+    async def create_audio(self, user_id: int, user_token: str, audio_wav: UploadFile, session: AsyncSession) -> Audio:
         if await self.is_valid_token_to_id(user_id, user_token, session):
             audio_mp3 = await self.convert_from_wav_to_mp3(audio_wav)
             audio = await self.audio_repository.add_audio_to_database(

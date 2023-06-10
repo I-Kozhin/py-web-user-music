@@ -3,26 +3,24 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.database.database_session_manager import get_session
 from app.services.audio_services import AudioService
-from app.settings import HOST, PORT
+from app.settings import HOST_OUT, PORT
 
 audio_router = APIRouter()
+audio_service = AudioService()
 
-# глобально сервис
+
 @audio_router.post("/add-audio/")
 async def add_audio(user_id: int, user_token: str, audio_wav: UploadFile = File(...),
-                    audio_service: AudioService = Depends(AudioService),
                     session: AsyncSession = Depends(get_session)) -> str:
-    converted_audio = await audio_service.convert_from_wav_to_mp3(audio_wav)  # нужно вызвать сервис один раз
     try:
-        audio = await audio_service.add_audio_wav(user_id, user_token, converted_audio, session)
+        audio = await audio_service.add_audio_wav(user_id, user_token, audio_wav, session)
     except:
         raise
-    return f"http://{HOST}:{PORT}/record?audio_id={audio.audio_id}&user_id={audio.user_id}"
+    return f"http://{HOST_OUT}:{PORT}/record?audio_id={audio.audio_id}&user_id={audio.user_id}"
 
 
 @audio_router.get("/record", response_model=bytes, name="get_audio")
-async def get_audio(audio_id: str, user_id: int, audio_service: AudioService = Depends(AudioService),
-                    session: AsyncSession = Depends(get_session)) -> bytes:
+async def get_audio(audio_id: str, user_id: int, session: AsyncSession = Depends(get_session)) -> bytes:
     try:
         audio = await audio_service.get_audio(audio_id, user_id, session)
     except:

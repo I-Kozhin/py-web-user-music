@@ -31,10 +31,11 @@ class AudioService:
         return converted_audio
 
     # create audio
-    async def add_audio_wav(self, user_id: int, user_token: str, audio_wav: BytesIO, session: AsyncSession) -> Audio:
+    async def add_audio_wav(self, user_id: int, user_token: str, audio_wav: UploadFile, session: AsyncSession) -> Audio:
         if await self.is_valid_token_to_id(user_id, user_token, session):
+            audio_mp3 = await self.convert_from_wav_to_mp3(audio_wav)
             audio = await self.audio_repository.add_audio_to_database(
-                Audio(audio_id=create_token(), user_id=user_id, user_token=user_token, audio_data=audio_wav.read()),
+                Audio(audio_id=create_token(), user_id=user_id, user_token=user_token, audio_data=audio_mp3.read()),
                 session) #  логику создания аудио отдать репозиторию, передавать туда только user_id, audio_data
         else:
             pass

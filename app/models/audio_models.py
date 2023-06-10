@@ -11,5 +11,4 @@ class Audio(Base):
     __tablename__ = "audios"
     audio_id = Column(String, primary_key=True, unique=True, index=True)
     user_id = Column(Integer, primary_key=True, index=True)  # Это foreign key
-    user_token = Column(String, index=True)  # Это я буду брать из таблицы Users
     audio_data = Column(LargeBinary)

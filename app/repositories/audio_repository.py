@@ -7,8 +7,8 @@ from sqlalchemy.orm import Session  # type: ignore
 
 from io import BytesIO
 from app.errors import CommitError
-from app.models.audio_models import Audio
-from app.models.user_models import User
+from app.models.audio import Audio
+from app.models.user import User
 from app.services.token_generator import create_token
 
 # Create a logger

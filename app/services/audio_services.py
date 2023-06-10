@@ -5,7 +5,7 @@ from pydub import AudioSegment
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import Session  # type: ignore
 
-from app.models.audio_models import Audio
+from app.models.audio import Audio
 from app.repositories.audio_repository import AudioRepository
 from app.repositories.user_repository import UserRepository
 from app.services.token_generator import create_token

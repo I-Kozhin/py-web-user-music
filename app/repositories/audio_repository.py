@@ -37,7 +37,7 @@ class AudioRepository:
         return audio
 
     @staticmethod
-    async def validate_id(user_id: int, session: AsyncSession) -> bool:
+    async def validate_user_id(user_id: int, session: AsyncSession) -> bool:
         query = select(Audio).filter(Audio.user_id == user_id)
         result = await session.execute(query)
         return result is not None

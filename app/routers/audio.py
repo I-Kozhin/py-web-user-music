@@ -19,6 +19,8 @@ async def add_audio(user_id: int, user_token: str, request: Request, audio_wav: 
         parsed_url = urlparse(f'{request.url}')
         ip_address = parsed_url.hostname
         return f"http://{ip_address}:{PORT}/record?audio_id={audio.audio_id}&user_id={audio.user_id}"
+    except HTTPException:
+        raise
     except Exception as e:
         logger.exception(f'Failed to perform {add_audio} func: {e}')
         raise HTTPException(status_code=500,
@@ -31,6 +33,8 @@ async def get_audio(audio_id: str, user_id: int, session: AsyncSession = Depends
         audio = await audio_service.get_audio(audio_id, user_id, session)
         return Response(content=audio.audio_data, media_type='audio/mpeg',
                         headers={'Content-Disposition': 'attachment; filename=audio_you_wanted.mp3'})
+    except HTTPException:
+        raise
     except Exception as e:
         logger.exception(f'Failed to perform {get_audio} func: {e}')
         raise HTTPException(status_code=500,

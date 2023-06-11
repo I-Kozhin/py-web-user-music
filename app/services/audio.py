@@ -25,6 +25,8 @@ class AudioService:
             if await self.is_valid_token_to_id(user_id, user_token, session):
                 audio_mp3 = await self.convert_from_wav_to_mp3(audio_wav)
                 return await self.audio_repository.add_audio_to_database(user_id, audio_mp3, session)
+        except HTTPException:
+            raise
         except Exception as e:
             logger.exception(f'Failed to perform {self.create_audio} func at {AudioService}: {e}')
             raise HTTPException(status_code=500,
@@ -35,6 +37,8 @@ class AudioService:
             if await self.is_valid_user_id(user_id, session):
                 if await self.is_valid_audio_id(audio_id, session):
                     return await self.audio_repository.get_audio_by_id(audio_id, session)
+        except HTTPException:
+            raise
         except Exception as e:
             logger.exception(f'Failed to perform {self.get_audio} func at {AudioService}: {e}')
             raise HTTPException(status_code=500,

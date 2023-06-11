@@ -3,7 +3,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from urllib.parse import urlparse
 
 from app.database.database_session_manager import get_session
-from app.services.audio_services import AudioService
+from app.services.audio import AudioService
 from app.settings import PORT
 
 audio_router = APIRouter()

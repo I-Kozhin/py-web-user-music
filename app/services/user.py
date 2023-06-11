@@ -1,12 +1,9 @@
-from fastapi import Depends
+from fastapi import HTTPException
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import Session  # type: ignore
 
-from app.database.database_session_manager import get_session
-from app.models.user import UserDto, User
+from app.models.user import UserDto
 from app.repositories.user import UserRepository
-from app.services.token_generator import create_token
-from app.errors import UserNameError
 
 
 class UserService:
@@ -20,7 +17,7 @@ class UserService:
             user = await self.user_repository.add_user_to_database(user_name, session)
             return UserDto.create_from_bd(user)
         else:
-            raise UserNameError("Username is incorrect.")
+            raise HTTPException(status_code=400, detail=f'Username is incorrect.')
 
     @staticmethod
     def is_valid_name(user_name: str) -> bool:

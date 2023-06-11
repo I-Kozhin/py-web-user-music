@@ -12,9 +12,10 @@ from app.settings import DB_HOST, DB_PORT, DB_USER, DB_PASSWORD, DB_NAME, DB_TYP
 
 
 SQLALCHEMY_DATABASE_URL = f"{DB_TYPE}://{DB_USER}:{DB_PASSWORD}@{DB_HOST}:{DB_PORT}/{DB_NAME}"
+SQLALCHEMY_DATABASE_URL_TEST = "postgresql+asyncpg://user:123456789@localhost:5432/postgresdb"
 
 try:
-    engine = create_async_engine(SQLALCHEMY_DATABASE_URL, echo=True)
+    engine = create_async_engine(SQLALCHEMY_DATABASE_URL_TEST, echo=True)
     Base = declarative_base()
     async_session = sessionmaker(engine, class_=AsyncSession, expire_on_commit=False)
 except SQLAlchemyError as er:

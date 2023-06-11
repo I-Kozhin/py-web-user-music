@@ -1,4 +1,4 @@
-import logging
+from app.errors import logger
 
 from sqlalchemy import select, and_
 from sqlalchemy.exc import SQLAlchemyError
@@ -8,11 +8,6 @@ from sqlalchemy.orm import Session  # type: ignore
 from app.models.user import User
 from app.errors import CommitError
 from app.services.token_generator import create_token
-
-# Create a logger
-logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(name)s - %(levelname)s - %(message)s')
-
-logger = logging.getLogger(__name__)
 
 
 class UserRepository:

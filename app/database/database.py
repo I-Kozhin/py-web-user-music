@@ -1,10 +1,13 @@
 import os
+from app.errors import logger
 
 from sqlalchemy import inspect
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.ext.asyncio import create_async_engine  # type: ignore
 from sqlalchemy.ext.declarative import declarative_base  # type: ignore
 from sqlalchemy.orm import sessionmaker  # type: ignore
+from sqlalchemy.exc import SQLAlchemyError
+from sqlalchemy.orm.exc import NoResultFound
 from app.settings import DB_HOST, DB_PORT, DB_USER, DB_PASSWORD, DB_NAME, DB_TYPE
 
 host = os.getenv('DB_HOST', DB_HOST)
@@ -16,9 +19,15 @@ dbtype = os.getenv('DB_TYPE', DB_TYPE)
 
 SQLALCHEMY_DATABASE_URL = f"{dbtype}+asyncpg://{user}:{password}@{host}:{port}/{db}"
 
-engine = create_async_engine(SQLALCHEMY_DATABASE_URL, echo=True)
-Base = declarative_base()
-async_session = sessionmaker(engine, class_=AsyncSession, expire_on_commit=False)
+try:
+    engine = create_async_engine(SQLALCHEMY_DATABASE_URL, echo=True)
+    Base = declarative_base()
+    async_session = sessionmaker(engine, class_=AsyncSession, expire_on_commit=False)
+except SQLAlchemyError as er:
+    logger.error(f"An error occurred while setting up SQLAlchemy :: {er}")
+    raise
+finally:
+    logger.info("Application finished.")
 
 
 def get_table_names(sync_conn):

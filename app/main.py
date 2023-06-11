@@ -1,8 +1,8 @@
 from fastapi import FastAPI
 
 from app.database.database import init_models
-from app.routers.audio_router import audio_router
-from app.routers.user_router import user_router
+from app.routers.audio import audio_router
+from app.routers.user import user_router
 from app.settings import HOST, PORT
 
 from app.errors import logger

@@ -1,6 +1,6 @@
 from io import BytesIO
 
-from fastapi import UploadFile
+from fastapi import UploadFile, HTTPException
 from pydub import AudioSegment
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import Session  # type: ignore
@@ -8,7 +8,6 @@ from sqlalchemy.orm import Session  # type: ignore
 from app.models.audio import Audio
 from app.repositories.audio_repository import AudioRepository
 from app.repositories.user_repository import UserRepository
-from app.services.token_generator import create_token
 
 
 class AudioService:
@@ -25,7 +24,8 @@ class AudioService:
             audio_mp3 = await self.convert_from_wav_to_mp3(audio_wav)
             audio = await self.audio_repository.add_audio_to_database(user_id, audio_mp3, session)
         else:
-            pass
+            raise HTTPException(status_code=400,
+                                detail=f'The current access token is invalid for the user with the ID: {user_id}')
 
         return audio
 
@@ -34,9 +34,9 @@ class AudioService:
             if await self.is_valid_audio_id(audio_id, session):
                 result = await self.audio_repository.get_audio_by_id(audio_id, session)
             else:
-                print('There is no such audio_id')
+                raise HTTPException(status_code=400, detail=f'There is no such audio_id: {audio_id}')
         else:
-            print('There is no such user_id')
+            raise HTTPException(status_code=400, detail=f'There is no such user with ID: {user_id}')
 
         return result
 

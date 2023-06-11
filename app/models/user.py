@@ -4,17 +4,6 @@ from sqlalchemy import Column, Integer, String
 from app.database.database import Base
 from sqlalchemy.orm import relationship
 
-class UserDto(BaseModel):
-    user_id: Optional[int]
-    user_token: Optional[str]
-
-    @classmethod
-    def create_from_bd(cls, db_row: 'User') -> 'UserDto':  # название метода
-        return cls(
-            user_id=db_row.user_id,
-            user_token=db_row.user_token
-        )
-
 
 class User(Base):
     """
@@ -28,3 +17,15 @@ class User(Base):
     user_token = Column(String, unique=True)
 
     audios = relationship("Audio", back_populates="user")
+
+
+class UserDto(BaseModel):
+    user_id: Optional[int]
+    user_token: Optional[str]
+
+    @classmethod
+    def create_from_bd(cls, db_row: User) -> 'UserDto':
+        return cls(
+            user_id=db_row.user_id,
+            user_token=db_row.user_token
+        )

@@ -1,4 +1,6 @@
-import logging
+from fastapi import HTTPException
+
+from app.errors import logger
 
 from sqlalchemy import select, and_
 from sqlalchemy.exc import SQLAlchemyError
@@ -8,11 +10,6 @@ from sqlalchemy.orm import Session  # type: ignore
 from app.models.user import User
 from app.errors import CommitError
 from app.services.token_generator import create_token
-
-# Create a logger
-logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(name)s - %(levelname)s - %(message)s')
-
-logger = logging.getLogger(__name__)
 
 
 class UserRepository:
@@ -24,7 +21,7 @@ class UserRepository:
             await session.commit()
         except SQLAlchemyError as error:
             logger.error(f"An error occurred while committing in the User repository: {error}")
-            raise CommitError("Commit failed. User database.")
+            raise CommitError("Commit failed. users table.")
         return new_user
 
     @staticmethod
@@ -32,7 +29,11 @@ class UserRepository:
         query = select(User).filter(and_(User.user_id == user_id, User.user_token == user_token))
         result = await session.execute(query)
         user = result.scalar()
-        return user is not None
+        if user is not None:
+            return True
+        else:
+            raise HTTPException(status_code=401,
+                                detail=f'The current access token is invalid for the user with the ID: {user_id}')
 
     @staticmethod
     def create_user_object(user_name: str) -> User:

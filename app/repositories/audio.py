@@ -20,7 +20,7 @@ class AudioRepository:
             await session.commit()
         except SQLAlchemyError as error:
             logger.error(f"An error occurred while committing in the Audio repository:: {error}")
-            raise CommitError("Commit failed. Audio repository.")
+            raise CommitError("Commit failed. audios table.")
         return new_audio
 
     @staticmethod

@@ -19,7 +19,7 @@ class UserRepository:
             await session.commit()
         except SQLAlchemyError as error:
             logger.error(f"An error occurred while committing in the User repository: {error}")
-            raise CommitError("Commit failed. User database.")
+            raise CommitError("Commit failed. users table.")
         return new_user
 
     @staticmethod

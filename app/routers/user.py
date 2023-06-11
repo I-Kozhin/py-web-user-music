@@ -1,9 +1,10 @@
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.database.database_session_manager import get_session
 from app.models.user import UserDto
-from app.services.user_services import UserService
+from app.services.user import UserService
+from app.errors import logger
 
 user_router = APIRouter()
 user_service = UserService()
@@ -13,7 +14,10 @@ user_service = UserService()
 async def create_user(user_name: str, session: AsyncSession = Depends(get_session)) -> UserDto:
     try:
         user = await user_service.create_user(user_name, session)
-    except:
+        return user
+    except HTTPException:
         raise
-
-    return user
+    except Exception as e:
+        logger.exception(f'Failed to perform {create_user} func: {e}')
+        raise HTTPException(status_code=500,
+                            detail=f'An unexpected error occurred while doing user`s get-request.')

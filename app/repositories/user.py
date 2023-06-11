@@ -32,7 +32,7 @@ class UserRepository:
         if user is not None:
             return True
         else:
-            raise HTTPException(status_code=400,
+            raise HTTPException(status_code=401,
                                 detail=f'The current access token is invalid for the user with the ID: {user_id}')
 
     @staticmethod

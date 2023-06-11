@@ -36,6 +36,7 @@ class AudioRepository:
     async def validate_user_id(user_id: int, session: AsyncSession) -> bool:
         query = select(Audio).filter(Audio.user_id == user_id)
         result = await session.execute(query)
+        result = result.scalar()
         if result is not None:
             return True
         else:

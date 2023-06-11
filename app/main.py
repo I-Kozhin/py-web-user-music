@@ -16,6 +16,7 @@ async def startup_event():
     await init_models()
 
 
+#   for testing
 @app.get("/")
 def root():
     return {"If you can see this message": "Then it is OK"}

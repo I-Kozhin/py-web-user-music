@@ -28,5 +28,3 @@ async def get_audio(audio_id: str, user_id: int, session: AsyncSession = Depends
 
     return Response(content=audio.audio_data, media_type='audio/mpeg',
                     headers={'Content-Disposition': 'attachment; filename=audio_you_wanted.mp3'})
-
-#  я передаю в get id_user, token_user, id_audio

@@ -1,5 +1,6 @@
 from fastapi import APIRouter, Depends, Response, File, UploadFile, Request
 from sqlalchemy.ext.asyncio import AsyncSession
+from urllib.parse import urlparse
 
 from app.database.database_session_manager import get_session
 from app.services.audio_services import AudioService
@@ -14,9 +15,11 @@ async def add_audio(user_id: int, user_token: str, request: Request, audio_wav: 
                     session: AsyncSession = Depends(get_session)) -> str:
     try:
         audio = await audio_service.create_audio(user_id, user_token, audio_wav, session)
+        parsed_url = urlparse(request.url)
+        ip_address = parsed_url.hostname
     except:
         raise
-    return f"http://{request.url._url}:{PORT}/record?audio_id={audio.audio_id}&user_id={audio.user_id}"
+    return f"http://{ip_address}:{PORT}/record?audio_id={audio.audio_id}&user_id={audio.user_id}"
 
 
 @audio_router.get("/record", response_model=bytes, name="get_audio")

@@ -11,7 +11,15 @@ from sqlalchemy.orm.exc import NoResultFound
 from app.settings import DB_HOST, DB_PORT, DB_USER, DB_PASSWORD, DB_NAME, DB_TYPE
 
 
-SQLALCHEMY_DATABASE_URL = f"{DB_TYPE}://{DB_USER}:{DB_PASSWORD}@{DB_HOST}:{DB_PORT}/{DB_NAME}"
+host = os.getenv('DB_HOST', DB_HOST)
+port = os.getenv('DB_PORT', DB_PORT)
+user = os.getenv('DB_USER', DB_USER)
+password = os.getenv('DB_PASSWORD', DB_PASSWORD)
+db = os.getenv('DB_NAME', DB_NAME)
+dbtype = os.getenv('DB_TYPE', DB_TYPE)
+
+SQLALCHEMY_DATABASE_URL = f"{dbtype}+asyncpg://{user}:{password}@{host}:{port}/{db}"
+
 
 try:
     engine = create_async_engine(SQLALCHEMY_DATABASE_URL, echo=True)

@@ -18,6 +18,8 @@ class UserService:
             if self.is_valid_name(user_name):
                 user = await self.user_repository.add_user_to_database(user_name, session)
                 return UserDto.create_from_bd(user)
+        except HTTPException:
+            raise
         except Exception as e:
             logger.exception(f'Failed to perform {self.create_user} func at {UserService}: {e}')
             raise HTTPException(status_code=500,

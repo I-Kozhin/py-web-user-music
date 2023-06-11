@@ -15,6 +15,8 @@ async def create_user(user_name: str, session: AsyncSession = Depends(get_sessio
     try:
         user = await user_service.create_user(user_name, session)
         return user
+    except HTTPException:
+        raise
     except Exception as e:
         logger.exception(f'Failed to perform {create_user} func: {e}')
         raise HTTPException(status_code=500,

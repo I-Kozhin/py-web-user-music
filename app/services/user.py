@@ -28,4 +28,4 @@ class UserService:
         if (len(user_name)) > 0 and not (user_name.isspace()):
             return True
         else:
-            raise HTTPException(status_code=400, detail=f'Username is incorrect.')
+            raise HTTPException(status_code=400, detail=f'Username is incorrect. It should`t contain only whitespaces.')

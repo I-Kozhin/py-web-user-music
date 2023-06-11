@@ -16,7 +16,7 @@ async def add_audio(user_id: int, user_token: str, request: Request, audio_wav: 
     try:
         audio = await audio_service.create_audio(user_id, user_token, audio_wav, session)
         parsed_url = urlparse(request.url)
-        ip_address = parsed_url.hostname
+        ip_address =str(parsed_url.hostname)
     except:
         raise
     return f"http://{ip_address}:{PORT}/record?audio_id={audio.audio_id}&user_id={audio.user_id}"

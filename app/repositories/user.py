@@ -1,3 +1,5 @@
+from fastapi import HTTPException
+
 from app.errors import logger
 
 from sqlalchemy import select, and_
@@ -27,7 +29,11 @@ class UserRepository:
         query = select(User).filter(and_(User.user_id == user_id, User.user_token == user_token))
         result = await session.execute(query)
         user = result.scalar()
-        return user is not None
+        if user is not None:
+            return True
+        else:
+            raise HTTPException(status_code=400,
+                                detail=f'The current access token is invalid for the user with the ID: {user_id}')
 
     @staticmethod
     def create_user_object(user_name: str) -> User:

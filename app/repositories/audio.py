@@ -37,7 +37,7 @@ class AudioRepository:
         query = select(Audio).filter(Audio.user_id == user_id)
         result = await session.execute(query)
         if result is not None:
-            return result
+            return True
         else:
             raise HTTPException(status_code=400, detail=f'There is no such user with ID: {user_id}')
 
@@ -47,7 +47,7 @@ class AudioRepository:
         result = await session.execute(query)
         result = result.scalar()
         if result is not None:
-            return result
+            return True
         else:
             raise HTTPException(status_code=400, detail=f'There is no such audio with ID: {audio_id}')
 

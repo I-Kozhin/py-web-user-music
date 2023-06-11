@@ -3,7 +3,7 @@ from app.errors import logger, SomeReconnectableError
 from time import sleep
 
 from sqlalchemy import inspect
-from sqlalchemy.ext.asyncio import AsyncSession
+from sqlalchemy.ext.asyncio import AsyncSession, AsyncEngine
 from sqlalchemy.ext.asyncio import create_async_engine  # type: ignore
 from sqlalchemy.ext.declarative import declarative_base  # type: ignore
 from sqlalchemy.orm import sessionmaker  # type: ignore
@@ -22,12 +22,13 @@ dbtype = os.getenv('DB_TYPE', DB_TYPE)
 
 SQLALCHEMY_DATABASE_URL = f"{dbtype}+asyncpg://{user}:{password}@{host}:{port}/{db}"
 
+
 try:
     engine = create_async_engine(SQLALCHEMY_DATABASE_URL, echo=True)
     Base = declarative_base()
     async_session = sessionmaker(engine, class_=AsyncSession, expire_on_commit=False)
-except SQLAlchemyError as er:
-    logger.error(f"An error occurred while setting up SQLAlchemy :: {er}")
+except SQLAlchemyError as e:
+    logger.error(f"An error occurred while setting up SQLAlchemy :: {e}")
     raise
 
 
@@ -36,7 +37,7 @@ def get_table_names(sync_conn):
         inspector = inspect(sync_conn)
         return inspector.get_table_names()
     except SQLAlchemyError as e:
-        raise SomeReconnectableError(f'No connection, because {e}')
+        raise SomeReconnectableError(f'No connection to database: {e}')
 
 
 async def get_table_names_async():
@@ -44,7 +45,7 @@ async def get_table_names_async():
         async with engine.begin() as conn:
             return await conn.run_sync(get_table_names)
     except SQLAlchemyError as e:
-        raise SomeReconnectableError(f'No connection, because {e}')
+        raise SomeReconnectableError(f'No connection to database: {e}')
 
 
 async def init_models():
@@ -53,6 +54,10 @@ async def init_models():
             table_names = await get_table_names_async()
         except SomeReconnectableError as e:
             logger.warning(f'Failed to connect: {e}')
+            sleep(timeout)
+            continue
+        except NoResultFound as e:
+            logger.warning(f"An error occurred in init_models: {e}")
             sleep(timeout)
             continue
         else:

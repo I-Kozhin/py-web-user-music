@@ -17,7 +17,7 @@ async def startup_event():
     try:
         await init_models()
     except Exception as e:
-        logger.exception(f'Failed to perform some startup_event func: {e}')
+        logger.exception(f'Failed to perform {startup_event} func: {e}')
         raise  # exit
 
 

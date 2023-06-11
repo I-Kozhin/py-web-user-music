@@ -1,3 +1,5 @@
+from fastapi import HTTPException
+
 from app.errors import logger
 
 from sqlalchemy import select
@@ -20,7 +22,7 @@ class AudioRepository:
             await session.commit()
         except SQLAlchemyError as error:
             logger.error(f"An error occurred while committing in the Audio repository:: {error}")
-            raise CommitError("Commit failed. audios table.")
+            raise CommitError("Commit failed. Audios table.")
         return new_audio
 
     @staticmethod
@@ -34,14 +36,20 @@ class AudioRepository:
     async def validate_user_id(user_id: int, session: AsyncSession) -> bool:
         query = select(Audio).filter(Audio.user_id == user_id)
         result = await session.execute(query)
-        return result is not None
+        if result is not None:
+            return result
+        else:
+            raise HTTPException(status_code=400, detail=f'There is no such user with ID: {user_id}')
 
     @staticmethod
     async def validate_audio_id(audio_id: str, session: AsyncSession) -> bool:
         query = select(Audio).filter(Audio.audio_id == audio_id)
         result = await session.execute(query)
         result = result.scalar()
-        return result is not None
+        if result is not None:
+            return result
+        else:
+            raise HTTPException(status_code=400, detail=f'There is no such audio with ID: {audio_id}')
 
     @staticmethod
     def create_audio_object(user_id: int, audio_data: BytesIO) -> Audio:

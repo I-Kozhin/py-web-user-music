@@ -8,3 +8,6 @@ class UserNameError(Exception):
         super().__init__(message)
 
 #  Нужно возвращать соответствубщий http статус
+
+# except QuestionServiceError as error:
+#         raise HTTPException(status_code=400, detail=str(error))

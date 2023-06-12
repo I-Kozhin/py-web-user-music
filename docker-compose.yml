@@ -30,4 +30,4 @@ services:
             DB_USER: "user"
             DB_PASSWORD: "123456789"
             DB_NAME: "postgresdb"
-            DB_TYPE: "postgresql"
+            DB_TYPE: "postgresql+asyncpg"

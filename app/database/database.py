@@ -1,26 +1,20 @@
 import os
-from app.errors import logger, SomeReconnectableError
 from time import sleep
 
 from sqlalchemy import inspect
-from sqlalchemy.ext.asyncio import AsyncSession, AsyncEngine
+from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.ext.asyncio import create_async_engine  # type: ignore
 from sqlalchemy.ext.declarative import declarative_base  # type: ignore
 from sqlalchemy.orm import sessionmaker  # type: ignore
 from sqlalchemy.exc import SQLAlchemyError
 from sqlalchemy.orm.exc import NoResultFound
+
+from app.errors import logger, SomeReconnectableError
 from app.settings import DB_HOST, DB_PORT, DB_USER, DB_PASSWORD, DB_NAME, DB_TYPE
 
 intervals = [1, 3, 7]
 
-host = os.getenv('DB_HOST', DB_HOST)
-port = os.getenv('DB_PORT', DB_PORT)
-user = os.getenv('DB_USER', DB_USER)
-password = os.getenv('DB_PASSWORD', DB_PASSWORD)
-db = os.getenv('DB_NAME', DB_NAME)
-dbtype = os.getenv('DB_TYPE', DB_TYPE)
-
-SQLALCHEMY_DATABASE_URL = f"{dbtype}+asyncpg://{user}:{password}@{host}:{port}/{db}"
+SQLALCHEMY_DATABASE_URL = f"{DB_TYPE}://{DB_USER}:{DB_PASSWORD}@{DB_HOST}:{DB_PORT}/{DB_NAME}"
 
 
 try:
@@ -66,5 +60,4 @@ async def init_models():
                     await conn.run_sync(Base.metadata.create_all)
             break
     else:
-        # if there was no break
         raise SomeReconnectableError(f'Failed to perform {init_models}')
